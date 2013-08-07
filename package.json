@@ -1,0 +1,22 @@
+{
+  "name": "proto-scope",
+  "version": "0.0.1",
+  "description": "Writes objects without `class`, but in the prototype way.",
+  "main": "proto.js",
+  "scripts": {
+    "test": "node-dev test.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jiyinyiyong/proto-scope.git"
+  },
+  "keywords": [
+    "oop",
+    "prototype"
+  ],
+  "author": "jiyinyiyong",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jiyinyiyong/proto-scope/issues"
+  }
+}
