@@ -8,76 +8,54 @@ Writes objects without `class`, but in the prototype way.
 npm install --save proto-scope
 ```
 
-and:
+the difference between `new` and `as` is: `new` contains `@init?()`,
+read the inplementation for more:
+
+```coffee
+exports.proto =
+  new: (object) ->
+    child = Object.create @
+    child[key] = value for key, value of object
+    child.init?()
+    child
+  as: (object) ->
+    child = Object.create @
+    child[key] = value for key, value of object
+    child
+```
+
+Here is a demo of using it:
 
 ```coffee
 {proto} = require 'proto-scope'
 print = (args...) -> console.log args...
 
 human = proto.new
-  init: (@name) ->
+  init: -> @name = 'human race'
+  give_name: (@name) ->
   introduce: -> print "this is #{@name}"
 
 tom = human.new()
-tom.init 'Tom'
 tom.introduce()
 
-man = human.new
+man = human.as
   speak: ->
-    print 'this is a man'
+    print 'speaks by', @name
 dan = man.new()
-dan.init 'Dan'
+dan.give_name 'Dan'
 dan.introduce()
 dan.speak()
 ```
 
-Also available for JavaScript:
-
-```js
-var dan, human, man, print, tom,
-  __slice = [].slice;
-
-print = function() {
-  var args;
-  args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-  return console.log.apply(console, args);
-};
-
-human = proto["new"]({
-  init: function(name) {
-    this.name = name;
-  },
-  introduce: function() {
-    return print("this is " + this.name);
-  }
-});
-
-tom = human["new"]();
-
-tom.init('Tom');
-
-tom.introduce();
-
-man = human["new"]({
-  speak: function() {
-    return print('this is a man');
-  }
-});
-
-dan = man["new"]();
-
-dan.init('Dan');
-
-dan.introduce();
-
-dan.speak();
-```
-
-### Use case
-
 Read this for more details: http://javascript.info/tutorial/inheritance
+Also available for JavaScript if you like that kind of life style...
 
-Notice: this can not be widely used, since `__proto__` is not supported in some platforms.
+### Limitations
+
+This can not be widely used, since `__proto__` is not supported in some platforms.
+
+Actually there are some problems implementing OOP with prototype,
+and more people choose using `class`, but prototype is a simple concept.
 
 ### Learn from Lua
 

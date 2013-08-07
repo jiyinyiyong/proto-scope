@@ -2,14 +2,22 @@
 exports.proto = {
   "new": function(object) {
     var child, key, value;
-    child = {};
-    child.__proto__ = this;
+    child = Object.create(this);
     for (key in object) {
       value = object[key];
       child[key] = value;
     }
     if (typeof child.init === "function") {
       child.init();
+    }
+    return child;
+  },
+  as: function(object) {
+    var child, key, value;
+    child = Object.create(this);
+    for (key in object) {
+      value = object[key];
+      child[key] = value;
     }
     return child;
   }

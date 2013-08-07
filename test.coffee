@@ -3,17 +3,17 @@
 print = (args...) -> console.log args...
 
 human = proto.new
-  init: (@name) ->
+  init: -> @name = 'human race'
+  give_name: (@name) ->
   introduce: -> print "this is #{@name}"
 
 tom = human.new()
-tom.init 'Tom'
 tom.introduce()
 
-man = human.new
+man = human.as
   speak: ->
-    print 'this is a man'
+    print 'speaks by', @name
 dan = man.new()
-dan.init 'Dan'
+dan.give_name 'Dan'
 dan.introduce()
 dan.speak()
