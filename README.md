@@ -22,13 +22,19 @@ exports.proto =
     child = Object.create @
     child[key] = value for key, value of object
     child
+  super: (method) ->
+    method = 'init' unless method?
+    @__proto__[method]?()
 ```
 
 Here is a demo of using it:
 
 ```coffee
+
 {proto} = require 'proto-scope'
 print = (args...) -> console.log args...
+
+console.log '-- inherent --'
 
 human = proto.new
   init: -> @name = 'human race'
@@ -38,6 +44,8 @@ human = proto.new
 tom = human.new()
 tom.introduce()
 
+console.log '-- sub class --'
+
 man = human.as
   speak: ->
     print 'speaks by', @name
@@ -45,6 +53,20 @@ dan = man.new()
 dan.give_name 'Dan'
 dan.introduce()
 dan.speak()
+
+console.log '-- super --'
+
+a = proto.as
+  init: ->
+    console.log 'this is a'
+b = a.as
+  init: ->
+    console.log 'this is b'
+    @super()
+c = b.new
+  init: ->
+    console.log 'this is c'
+    @super()
 ```
 
 Read this for more details: http://javascript.info/tutorial/inheritance

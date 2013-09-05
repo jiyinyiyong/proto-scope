@@ -9,3 +9,6 @@ exports.proto =
     child = Object.create @
     child[key] = value for key, value of object
     child
+  super: (method) ->
+    method = 'init' unless method?
+    @__proto__[method]?()
