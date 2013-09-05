@@ -20,5 +20,12 @@ exports.proto = {
       child[key] = value;
     }
     return child;
+  },
+  "super": function(method) {
+    var _base;
+    if (method == null) {
+      method = 'init';
+    }
+    return typeof (_base = this.__proto__)[method] === "function" ? _base[method]() : void 0;
   }
 };
