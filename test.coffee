@@ -1,13 +1,12 @@
 
-{proto} = require './proto.coffee'
-print = (args...) -> console.log args...
+proto = require './proto.coffee'
 
 console.log '-- inherent --'
 
-human = proto.new
+human = proto.as
   init: -> @name = 'human race'
   give_name: (@name) ->
-  introduce: -> print "this is #{@name}"
+  introduce: -> console.log "this is #{@name}"
 
 tom = human.new()
 tom.introduce()
@@ -16,7 +15,7 @@ console.log '-- sub class --'
 
 man = human.as
   speak: ->
-    print 'speaks by', @name
+    console.log 'speaks by', @name
 dan = man.new()
 dan.give_name 'Dan'
 dan.introduce()

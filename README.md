@@ -4,58 +4,45 @@ proto-scope
 
 Writes objects without `class`, but in the prototype way.
 
+
+### Usage
+
 ```
 npm install --save proto-scope
-```
-
-the difference between `new` and `as` is: `new` contains `@init?()`,
-read the inplementation for more:
-
-```coffee
-exports.proto =
-  new: (object) ->
-    child = Object.create @
-    child[key] = value for key, value of object
-    child.init?()
-    child
-  as: (object) ->
-    child = Object.create @
-    child[key] = value for key, value of object
-    child
-  super: (method) ->
-    method = 'init' unless method?
-    @__proto__[method]?()
 ```
 
 Here is a demo of using it:
 
 ```coffee
+proto = require 'proto-scope'
+```
 
-{proto} = require 'proto-scope'
-print = (args...) -> console.log args...
+* Inherent
 
-console.log '-- inherent --'
+Passing object to `proto.as` to create sub-class,
+passing object to `proto.new` to create instance:
 
-human = proto.new
+```coffee
+human = proto.as
   init: -> @name = 'human race'
   give_name: (@name) ->
-  introduce: -> print "this is #{@name}"
+  introduce: -> console.log "this is #{@name}"
 
 tom = human.new()
-tom.introduce()
-
-console.log '-- sub class --'
+tom.introduce() # => "this is human race"
 
 man = human.as
   speak: ->
     print 'speaks by', @name
 dan = man.new()
 dan.give_name 'Dan'
-dan.introduce()
-dan.speak()
+dan.introduce() # => "this is Dan"
+dan.speak() # => "speaks by Dan"
+```
 
-console.log '-- super --'
+* Super
 
+```coffee
 a = proto.as
   init: ->
     console.log 'this is a'
@@ -69,8 +56,50 @@ c = b.new
     @super()
 ```
 
+
+### Implementation
+
+the difference between `new` and `as` is: `new` contains `@init?()`:
+
+```coffee
+module.exports =
+  as: (object) ->
+    o = object or {}
+    o.__proto__ = @
+    o
+  new: (object) ->
+    o = @as object
+    o.init?()
+    o
+```
+
+Also, we my need `super`, so dirty code comes:
+
+```coffee
+module.exports =
+  as: (object) ->
+    o = object or {}
+    o.__called__ = undefined
+    o.__proto__ = @
+    for key, value of o
+      f = (key, value) ->
+        if typeof value is 'function'
+          if key in ['as', 'new', 'super']
+            return
+          o[key] = (args...) ->
+            o.__called__ = key
+            value.apply o, args
+          o[key].toString = ->
+            value.toString()
+      f key, value
+    o
+  super: ->
+    @__proto__[@__called__]?()
+```
+
 Read this for more details: http://javascript.info/tutorial/inheritance
 Also available for JavaScript if you like that kind of life style...
+
 
 ### Limitations
 
@@ -91,6 +120,7 @@ function Account:new (o)
     return o
   end
 ```
+
 
 ### License
 

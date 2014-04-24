@@ -1,6 +1,6 @@
 {
   "name": "proto-scope",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Writes objects without `class`, but in the prototype way.",
   "main": "proto.js",
   "scripts": {

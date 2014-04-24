@@ -1,14 +1,24 @@
 
-exports.proto =
-  new: (object) ->
-    child = Object.create @
-    child[key] = value for key, value of object
-    child.init?()
-    child
+module.exports =
   as: (object) ->
-    child = Object.create @
-    child[key] = value for key, value of object
-    child
-  super: (method) ->
-    method = 'init' unless method?
-    @__proto__[method]?()
+    o = object or {}
+    o.__called__ = undefined
+    o.__proto__ = @
+    for key, value of o
+      f = (key, value) ->
+        if typeof value is 'function'
+          if key in ['as', 'new', 'super']
+            return
+          o[key] = (args...) ->
+            o.__called__ = key
+            value.apply o, args
+          o[key].toString = ->
+            value.toString()
+      f key, value
+    o
+  new: (object) ->
+    o = @as object
+    o.init?()
+    o
+  super: ->
+    @__proto__[@__called__]?()
